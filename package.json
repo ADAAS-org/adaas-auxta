@@ -30,7 +30,6 @@
     "version": "echo git add .",
     "postversion": "git push --no-verify && git push --tags --no-verify && echo \"\n======Version Pushed Successfully=====\n\" ",
     "echo-version": "echo $npm_package_version",
-    "postinstall": "tsc --declaration --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist  && rm -r ./dist/tests",
     "build": "tsc --declaration --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist  && rm -r ./dist/tests",
     "test": "jest",
     "test:unit": "jest tests/unit",
