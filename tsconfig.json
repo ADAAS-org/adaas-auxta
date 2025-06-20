@@ -30,9 +30,16 @@
       "node_modules/@types"
     ],
     "paths": {
-      "@adaas/a-sdk/context/*": ["src/context/*"],
-      "@adaas/a-sdk/components/*": ["src/components/*"],
-      "@adaas/a-sdk/containers/*": ["src/containers/*"]
+      "@auxta/lib/*": ["src/lib/*"],
+      "@auxta/types/*": ["src/types/*"],
+      "@auxta/api/*": ["src/api/*"],
+      "@auxta/classes/*": ["src/classes/*"],
+      "@auxta/utils/*": ["src/utils/*"],
+      "@auxta/errors/*": ["src/errors/*"],
+      "@auxta/constants/*": ["src/constants/*"],
+      "@auxta/core/*": ["src/core/*"],
+      "@auxta/metadata/*": ["src/metadata/*"],
+      "@auxta/decorators/*": ["src/decorators/*"]
     },
     "lib": [
       "dom",

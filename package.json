@@ -1,7 +1,11 @@
 {
   "name": "@adaas/auxta",
   "version": "0.0.1",
-  "description": "SDK  for Auxta DB to connect and operate ",
+  "description": "SDK for Auxta DB to connect and operate ",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,17 +24,17 @@
     "ext": "ts, js"
   },
   "scripts": {
-    "test": "jest",
-    "test:simple-server": "nodemon ./examples/simple-server/src/adaas.app.ts",
-    "test:concept": "nodemon ./examples/concept-server/concept.ts",
-    "test:test": "nodemon ./src/test/app.ts",
+    "start": "nodemon ./index.ts",
     "publish": "npm run build && git add . && git commit -m \"new version created :: $(cat package.json | grep version | head -1  | awk -F: '{ print $2 }'  | sed 's/[\",]//g')\" && npm version patch && npm publish --access public",
-    "preversion": "echo test",
+    "preversion": "npm run test:unit",
     "version": "echo git add .",
     "postversion": "git push --no-verify && git push --tags --no-verify && echo \"\n======Version Pushed Successfully=====\n\" ",
     "echo-version": "echo $npm_package_version",
     "postinstall": "tsc --declaration --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist  && rm -r ./dist/tests",
-    "build": "tsc --declaration --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist  && rm -r ./dist/tests"
+    "build": "tsc --declaration --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist  && rm -r ./dist/tests",
+    "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration"
   },
   "repository": {
     "type": "git",

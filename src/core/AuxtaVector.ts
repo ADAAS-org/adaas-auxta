@@ -1,0 +1,124 @@
+import crypto from 'crypto';
+import { AuxtaDimension } from './AuxtaDimension';
+import { AuxtaSerializedVector, AuxtaVectorConstructorProps, AuxtaVectorDefinition } from '@auxta/types/AuxtaVector.types';
+import { AuxtaComputedDimension } from './dimensions/AuxtaComputedDimension.class';
+import { AUXTA_INDEX_METADATA_KEY } from '@auxta/decorators/Index.decorator';
+import { AuxtaIndex } from './AuxtaIndex';
+import { AuxtaVectorError } from '@auxta/errors/AuxtaVector.error';
+import { AUXTA_VECTOR_METADATA_KEY } from '@auxta/metadata/Dimensions.meta';
+
+
+
+/**
+ * This class provides a custom structure for the Vectors that are used in auction process. 
+ * Each vector Describes entity participating in the auction.
+ * 
+ *  
+ * 
+ */
+export class AuxtaVector<T extends object> {
+
+    readonly id: string = `auxv:v1--${crypto.randomUUID()}`; //  Unique identifier for the vector, generated using UUID
+
+    constructor(vector: AuxtaVectorConstructorProps<T>) {
+        if (!this.index)
+            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+
+        Object.assign(this, vector);
+    }
+
+
+    get name(): string {
+        return this.constructor.name;
+    }
+
+    get index(): AuxtaIndex {
+        const index: AuxtaIndex = this.constructor[AUXTA_INDEX_METADATA_KEY];
+        return index;
+    }
+
+
+    get size(): number {
+        let size = 0;
+
+        this.constructor[AUXTA_VECTOR_METADATA_KEY].forEach((dimension: Partial<AuxtaDimension>) => {
+            if (dimension instanceof AuxtaDimension) {
+                size += dimension.size;
+            }
+        });
+        return size;
+    }
+
+    get dimensions(): Array<AuxtaDimension> {
+        return this.constructor[AUXTA_VECTOR_METADATA_KEY] || []
+    }
+
+    static get dimensions(): Array<AuxtaDimension> {
+        return this[AUXTA_VECTOR_METADATA_KEY] || []
+    }
+
+    static get index(): AuxtaIndex {
+        const index: AuxtaIndex = this[AUXTA_INDEX_METADATA_KEY];
+        return index;
+    }
+
+
+
+    /**
+     * Converts the vector to a normalized format.
+     * 
+     * return e.g. [["5", "6", "186"], ["param1", "param2"], ... ["true"], ["{a:'b'}"]]
+     * 
+     * @returns 
+     */
+    normalize(): Array<Array<string>> {
+        if (!this.index) {
+            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+        }
+
+        return this.index.dimensions.map(d => d.withValue(this[d.name]).normalize());
+    }
+
+
+    /**
+     * 
+     * Returns a string representation of the vector.
+     * e.g. auxv:v1--1234-5678-9012-3456@AuxtaVector[["186"], ["1", "2"], ... ["true"], ["{a:'b'}"]]
+     * 
+     * @returns 
+     */
+    toString(): string {
+        return `${this.id}@${this.name}[${this.normalize().map(dimension => `[${dimension.join(', ')}]`).join(', ')}]`;
+    }
+
+
+    toJSON(): AuxtaSerializedVector<T> {
+        if (!this.index)
+            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+
+        return {
+            id: this.id,
+            name: this.name,
+            index: this.index.name,
+            size: this.size,
+
+            ...(this.dimensions.reduce((acc, dimension) => {
+                acc[dimension.name] = this[dimension.name];
+
+                return acc
+            }, {})) as T
+        };
+    }
+
+
+    static toDefinition():AuxtaVectorDefinition {
+
+        if (!this.index)
+            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+
+        return {
+            name: this.name,
+            dimensions: this.dimensions.map((dimension) => dimension.toDefinition()),
+        }
+    }
+}
