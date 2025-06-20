@@ -4,7 +4,7 @@ import {
     AuxtaDimensionScope,
     AuxtaDimensionValueType,
     AuxtaDynamicDimensionBehaviors
-} from "@auxta/constants/Dimension.constants";
+} from "@auxta/constants/AuxtaDimension.constants";
 
 
 

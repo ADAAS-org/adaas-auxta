@@ -1,4 +1,3 @@
-import { Vector } from "@auxta/classes/Vector.class";
 import { AuxtaBaseCommand } from "../AuxtaBaseCommand.class";
 import { AuxtaCommandError } from "@auxta/errors/AuxtaCommand.error";
 import { AuxtaVector } from "@auxta/core/AuxtaVector";

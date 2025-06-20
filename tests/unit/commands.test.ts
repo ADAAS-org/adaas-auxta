@@ -130,7 +130,7 @@ describe('Auxta Classes Initialization', () => {
         expect(compiledCommand.operation).toBe('SEARCH');
         expect(compiledCommand.conditions).toBeDefined();
         expect(compiledCommand.conditions).toBeInstanceOf(Object);
-        expect(Object.keys(compiledCommand.conditions).length).toBe(2);
+        expect(Object.keys(compiledCommand.conditions).length).toBe(3);
 
     });
 

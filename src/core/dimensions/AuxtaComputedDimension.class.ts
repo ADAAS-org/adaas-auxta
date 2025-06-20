@@ -1,7 +1,7 @@
 import { AuxtaComputedDimensionDefinition, AuxtaDimensionDefinition, ComputedDimensionConstructorConfig, DimensionConstructorBaseConfig } from "@auxta/types/AuxtaDimension.types";
 import { AuxtaDimension } from "../AuxtaDimension";
 import crypto from 'crypto';
-import { DimensionError } from "@auxta/errors/Dimension.error";
+import { AuxtaDimensionError } from "@auxta/errors/AuxtaDimension.error";
 
 
 
@@ -40,9 +40,9 @@ export class AuxtaComputedDimension<T extends any = any> extends AuxtaDimension<
 
     protected fromConfig(config: ComputedDimensionConstructorConfig<T>): void {
         if (!config || typeof config !== 'object')
-            throw DimensionError.invalidConfig(config, `Invalid configuration for computed dimension: ${this.name}. Expected an object.`);
+            throw AuxtaDimensionError.invalidConfig(config, `Invalid configuration for computed dimension: ${this.name}. Expected an object.`);
         if (!config.formula)
-            throw DimensionError.invalidConfig(config, `Formula is required for computed dimension: ${this.name}.`);
+            throw AuxtaDimensionError.invalidConfig(config, `Formula is required for computed dimension: ${this.name}.`);
 
         super.fromConfig(config);
 

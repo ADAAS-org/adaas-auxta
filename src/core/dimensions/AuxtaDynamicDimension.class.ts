@@ -1,7 +1,7 @@
 import { AuxtaDynamicDimensionDefinition, DynamicDimensionConstructorConfig } from "@auxta/types/AuxtaDimension.types";
 import { AuxtaDimension } from "../AuxtaDimension";
 import crypto from 'crypto';
-import { DimensionError } from "@auxta/errors/Dimension.error";
+import { AuxtaDimensionError } from "@auxta/errors/AuxtaDimension.error";
 
 
 
@@ -41,9 +41,9 @@ export class AuxtaDynamicDimension<T extends any = any> extends AuxtaDimension<T
 
     protected fromConfig(config: DynamicDimensionConstructorConfig<T>): void {
         if (!config || typeof config !== 'object')
-            throw DimensionError.invalidConfig(`Invalid configuration for dynamic dimension: ${this.name}. Expected an object.`);
+            throw AuxtaDimensionError.invalidConfig(`Invalid configuration for dynamic dimension: ${this.name}. Expected an object.`);
         if (!config.behavior)
-            throw DimensionError.invalidConfig(`Behavior is required for dynamic dimension: ${this.name}.`);
+            throw AuxtaDimensionError.invalidConfig(`Behavior is required for dynamic dimension: ${this.name}.`);
 
 
         this.config = config;
@@ -60,7 +60,7 @@ export class AuxtaDynamicDimension<T extends any = any> extends AuxtaDimension<T
             'uint8', 'uint16', 'uint32', 'float32',
             'float64', 'double', 'bigint', 'decimal'
         ].indexOf(this.config.type) === -1) {
-            throw DimensionError.invalidConfig(`Aggregated dynamic dimension must have type 'number', but got '${this.config.type}' for dimension: ${this.name}.`);
+            throw AuxtaDimensionError.invalidConfig(`Aggregated dynamic dimension must have type 'number', but got '${this.config.type}' for dimension: ${this.name}.`);
         }
 
     }
@@ -83,10 +83,10 @@ export class AuxtaDynamicDimension<T extends any = any> extends AuxtaDimension<T
         console.log('vector ',this.vector)
 
         if (this.config.scope === 'vector' && (!this.index || !this.vector))
-            throw DimensionError.invalidConfig(`Vector scope requires 'vector' and 'index' properties to be defined for dynamic dimension: ${this.name}.`);
+            throw AuxtaDimensionError.invalidConfig(`Vector scope requires 'vector' and 'index' properties to be defined for dynamic dimension: ${this.name}.`);
 
         if (this.config.scope === 'index' && !this.index)
-            throw DimensionError.invalidConfig(`Index scope requires 'index' property to be defined for dynamic dimension: ${this.name}.`);
+            throw AuxtaDimensionError.invalidConfig(`Index scope requires 'index' property to be defined for dynamic dimension: ${this.name}.`);
 
         return {
             ...(super.toDefinition()),

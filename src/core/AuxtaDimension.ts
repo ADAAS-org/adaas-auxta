@@ -1,5 +1,5 @@
-import { AuxtaDimensionTypeSizeMap, AuxtaDimensionValueType } from '@auxta/constants/Dimension.constants';
-import { DimensionError } from '@auxta/errors/Dimension.error';
+import { AuxtaDimensionTypeSizeMap, AuxtaDimensionValueType } from '@auxta/constants/AuxtaDimension.constants';
+import { AuxtaDimensionError } from '@auxta/errors/AuxtaDimension.error';
 import { AUXTA_DIMENSION_INDEX_METADATA_KEY, AUXTA_DIMENSION_VECTOR_METADATA_KEY } from '@auxta/metadata/Dimensions.meta';
 import { AuxtaDimensionDefinition, DimensionConstructorBaseConfig, IDimension } from '@auxta/types/AuxtaDimension.types';
 import crypto from 'crypto';
@@ -76,7 +76,7 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
                 break;
 
             default:
-                throw DimensionError.invalidConstructor(
+                throw AuxtaDimensionError.invalidConstructor(
                     `Invalid constructor parameters: ${JSON.stringify(param1)} and ${JSON.stringify(param2)}`
                 );
         }
@@ -99,10 +99,10 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
      */
     protected fromConfig(config: DimensionConstructorBaseConfig<T>): void {
         if (!config || typeof config !== 'object')
-            throw DimensionError.invalidConfig(config);
+            throw AuxtaDimensionError.invalidConfig(config);
 
         if (!config.name)
-            throw DimensionError.invalidConfig(config, 'Dimension must have a name and type defined.');
+            throw AuxtaDimensionError.invalidConfig(config, 'Dimension must have a name and type defined.');
 
 
         this.name = config.name;
@@ -134,7 +134,7 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
             this.config = parsed.config;
 
         } catch (err) {
-            throw DimensionError.invalidSerializedValue(serialized, err);
+            throw AuxtaDimensionError.invalidSerializedValue(serialized, err);
         }
     }
 
@@ -219,7 +219,7 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
                 case 'int32':
                 case 'number':
                     const num = Number(value);
-                    if (isNaN(num)) throw DimensionError.valueDoesNotMatchType('number', value);
+                    if (isNaN(num)) throw AuxtaDimensionError.valueDoesNotMatchType('number', value);
                     return num;
 
                 case 'bit':
@@ -233,28 +233,28 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
                 case 'object':
                     if (typeof value === 'object' && value !== null && !Array.isArray(value)) return value;
                     if (typeof value === 'string') return JSON.parse(value);
-                    throw DimensionError.valueDoesNotMatchType('object', value);
+                    throw AuxtaDimensionError.valueDoesNotMatchType('object', value);
 
                 case 'array':
                     if (Array.isArray(value)) return value;
                     if (typeof value === 'string') return JSON.parse(value);
-                    throw DimensionError.valueDoesNotMatchType('array', value);
+                    throw AuxtaDimensionError.valueDoesNotMatchType('array', value);
 
                 case 'date':
                     if (value instanceof Date) return value;
                     const date = new Date(value);
-                    if (isNaN(date.getTime())) throw DimensionError.valueDoesNotMatchType('date', value);
+                    if (isNaN(date.getTime())) throw AuxtaDimensionError.valueDoesNotMatchType('date', value);
                     return date;
 
                 case 'function':
                     if (typeof value === 'function') return value;
-                    throw DimensionError.valueDoesNotMatchType('function', value);
+                    throw AuxtaDimensionError.valueDoesNotMatchType('function', value);
 
                 default:
-                    throw DimensionError.unsupportedType(type);
+                    throw AuxtaDimensionError.unsupportedType(type);
             }
         } catch (err) {
-            throw DimensionError.errorDuringTypesConversion(value, typeof value, type, err);
+            throw AuxtaDimensionError.errorDuringTypesConversion(value, typeof value, type, err);
         }
     }
 
@@ -285,7 +285,7 @@ export class AuxtaDimension<T extends any = any> implements IDimension<T> {
             return 'object';
         }
         if (typeof value === 'function') return 'function';
-        throw DimensionError.unsupportedType(typeof value);
+        throw AuxtaDimensionError.unsupportedType(typeof value);
     }
 
 

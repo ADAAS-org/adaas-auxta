@@ -1,27 +1,27 @@
 import { AuxtaError } from "./AuxtaError.class";
-import { AuxtaDimensionErrorCode } from "@auxta/constants/Dimension.constants";
+import { AuxtaDimensionErrorCode } from "@auxta/constants/AuxtaDimension.constants";
 
 
-export class DimensionError extends AuxtaError {
+export class AuxtaDimensionError extends AuxtaError {
 
     constructor(
         code: string,
         message: string
     ) {
         super(code, message);
-        this.name = 'DimensionError';
+        this.name = 'AuxtaDimensionError';
     }
 
-    static methodNotImplemented(method: string): DimensionError {
-        return new DimensionError(AuxtaDimensionErrorCode.METHOD_NOT_IMPLEMENTED, `Method ${method} is not implemented.`);
+    static methodNotImplemented(method: string): AuxtaDimensionError {
+        return new AuxtaDimensionError(AuxtaDimensionErrorCode.METHOD_NOT_IMPLEMENTED, `Method ${method} is not implemented.`);
     }
 
-    static valueDoesNotMatchType(value: any, type: string): DimensionError {
-        return new DimensionError(AuxtaDimensionErrorCode.VALUE_DOES_NOT_MATCH_TYPE, `Value ${value} does not match type ${type}.`);
+    static valueDoesNotMatchType(value: any, type: string): AuxtaDimensionError {
+        return new AuxtaDimensionError(AuxtaDimensionErrorCode.VALUE_DOES_NOT_MATCH_TYPE, `Value ${value} does not match type ${type}.`);
     }
 
-    static unsupportedType(type: string): DimensionError {
-        return new DimensionError(AuxtaDimensionErrorCode.UNSUPPORTED_TYPE, `Type ${type} is not supported.`);
+    static unsupportedType(type: string): AuxtaDimensionError {
+        return new AuxtaDimensionError(AuxtaDimensionErrorCode.UNSUPPORTED_TYPE, `Type ${type} is not supported.`);
     }
 
     static errorDuringTypesConversion(
@@ -29,8 +29,8 @@ export class DimensionError extends AuxtaError {
         fromType: string,
         toType: string,
         error: any
-    ): DimensionError {
-        return new DimensionError(
+    ): AuxtaDimensionError {
+        return new AuxtaDimensionError(
             AuxtaDimensionErrorCode.ERROR_DURING_TYPES_CONVERSION,
             `Error during conversion of value ${value} from type ${fromType} to type ${toType}: ${error.message || error}`
         );
@@ -39,8 +39,8 @@ export class DimensionError extends AuxtaError {
     static invalidConfig(
         config: any,
         message: string = 'Invalid configuration for dimension.'
-    ): DimensionError {
-        return new DimensionError(
+    ): AuxtaDimensionError {
+        return new AuxtaDimensionError(
             AuxtaDimensionErrorCode.INVALID_CONFIG,
             `Invalid configuration: ${JSON.stringify(config)}. ${message}`
         );
@@ -50,8 +50,8 @@ export class DimensionError extends AuxtaError {
     static invalidSerializedValue(
         value: any,
         error: any
-    ): DimensionError {
-        return new DimensionError(
+    ): AuxtaDimensionError {
+        return new AuxtaDimensionError(
             AuxtaDimensionErrorCode.INVALID_SERIALIZED_VALUE,
             `Invalid serialized value: ${JSON.stringify(value)}. Error: ${error.message || error}`
         );
@@ -60,8 +60,8 @@ export class DimensionError extends AuxtaError {
     static invalidConstructor(
         config: any,
         message: string = 'Invalid constructor configuration for dimension.'
-    ): DimensionError {
-        return new DimensionError(
+    ): AuxtaDimensionError {
+        return new AuxtaDimensionError(
             AuxtaDimensionErrorCode.INVALID_CONSTRUCTOR,
             `Invalid constructor configuration: ${JSON.stringify(config)}. ${message}`
         );
