@@ -79,9 +79,6 @@ export class AuxtaDynamicDimension<T extends any = any> extends AuxtaDimension<T
 
     toDefinition(): AuxtaDynamicDimensionDefinition {
 
-        console.log('index ',this.index)
-        console.log('vector ',this.vector)
-
         if (this.config.scope === 'vector' && (!this.index || !this.vector))
             throw AuxtaDimensionError.invalidConfig(`Vector scope requires 'vector' and 'index' properties to be defined for dynamic dimension: ${this.name}.`);
 

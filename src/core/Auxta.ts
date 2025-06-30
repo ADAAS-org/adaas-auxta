@@ -6,7 +6,7 @@ import { IAuxtaConstructorConfig } from "@auxta/types/Auxta.types";
 import { version } from '../../package.json';
 import { AuxtaVector } from "./AuxtaVector";
 import { AuxtaDefineCommand } from "@auxta/lib/commands/AuxtaDefine.command";
-import { AUXTA_INDEXES } from "@auxta/decorators/Index.decorator";
+import { AUXTA_INDEXES, AUXTA_VECTORS } from "@auxta/decorators/Index.decorator";
 import { AuxtaGetCommand } from "@auxta/lib/commands/AuxtaGet.command";
 import { AuxtaAddCommand } from "@auxta/lib/commands/AuxtaAdd.command";
 import { AuxtaServerResponse } from "@auxta/types/AuxtaClient.types";
@@ -14,6 +14,7 @@ import { AuxtaDropCommand } from "@auxta/lib/commands/AuxtaDrop.command";
 import { AuxtaLogger } from "@auxta/utils/Logger.service";
 import { AuxtaServerAction } from "@auxta/constants/AuxtaClient.constants";
 import { AuxtaIndex } from "./AuxtaIndex";
+import { AuxtaSearchCommand } from "@auxta/lib/commands/AuxtaSearch.command";
 
 
 export class Auxta {
@@ -83,10 +84,13 @@ export class Auxta {
     ): Promise<void>
     async query<T extends AuxtaVector<any> = any>(
         command: AuxtaAddCommand
-    ): Promise<void>
+    ): Promise<Array<AuxtaVector<T>>>
     async query<T extends AuxtaVector<any> = any>(
         command: AuxtaGetCommand
-    ): Promise<AuxtaVector<T>>
+    ): Promise<Array<T>>
+    async query<T extends AuxtaVector<any> = any>(
+        command: AuxtaSearchCommand
+    ): Promise<Array<T>>
     async query(
         command: AuxtaBaseCommand
     ): Promise<any> {
@@ -98,6 +102,8 @@ export class Auxta {
             return this.mapResult(result);
 
         } catch (error) {
+            AuxtaLogger.error(`Failed to execute command: ${command}`, error);
+
             throw AuxtaError.executionFailed(
                 `Failed to execute command: ${error instanceof Error ? error.message : 'Unknown error'}`,
                 error
@@ -110,14 +116,32 @@ export class Auxta {
     private mapResult(response: AuxtaServerResponse) {
         if (response.data && Array.isArray(response.data)) {
             // If the result is an array, we assume it's a list of vectors
-            return response.data.map((item: any) => {
-                const targetConstructor = this.vectors.find(vector => vector.name === item.name);
-                if (!targetConstructor) {
-                    throw AuxtaError.executionFailed(
-                        `Vector ${item.name} not found in the registered vectors.`
-                    );
+            return response.data.map((item) => {
+
+                switch (true) {
+                    case item.entity === 'vector' && 'definition' in item && !!item.definition:
+                        const vectorConstructor = this.vectors.find(vector => vector.name === item.definition!.name);
+                        if (!vectorConstructor) {
+                            throw AuxtaError.executionFailed(
+                                `Vector ${item.definition!.name} not found in the registered vectors.`
+                            );
+                        }
+
+                        return new vectorConstructor(item.definition);
+                    case item.entity === 'index' && 'definition' in item && !!item.definition: {
+                        const index = this.indexes.find(index => index.name === item.definition!.name);
+                        if (!index) {
+                            throw AuxtaError.executionFailed(
+                                `Index ${item.definition!.name} not found in the registered indexes.`
+                            );
+                        }
+                        return index;
+                    }
+                    default: {
+                        return item; // Return the item as is if it doesn't match any known entity
+                    }
+
                 }
-                return new targetConstructor(item);
             });
         }
     }
@@ -154,6 +178,14 @@ export class Auxta {
             this.indexes = indexes;
 
             AuxtaLogger.info(`Auxta initialized with ${this.indexes.length} indexes.`);
+
+            const vectors = Array.from(AUXTA_VECTORS.values()).map((vector) => {
+                return vector;
+            });
+
+            this.vectors = vectors;
+
+            AuxtaLogger.info(`Auxta initialized with ${this.vectors.length} vectors.`);
 
             //  Syncronization // Synchronize the Auxta instance with the server
 

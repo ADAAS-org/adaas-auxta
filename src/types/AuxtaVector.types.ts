@@ -26,6 +26,8 @@ export type AuxtaSerializedVector<T extends object = any> = T & {
 
 
 export type AuxtaVectorDefinition = {
+    id: string;
+
     /**
      * The name of the vector.
      */

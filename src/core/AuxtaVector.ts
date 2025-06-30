@@ -18,13 +18,18 @@ import { AUXTA_VECTOR_METADATA_KEY } from '@auxta/metadata/Dimensions.meta';
  */
 export class AuxtaVector<T extends object> {
 
-    readonly id: string = `auxv:v1--${crypto.randomUUID()}`; //  Unique identifier for the vector, generated using UUID
+    id: string = `auxv:v1--${crypto.randomUUID()}`; //  Unique identifier for the vector, generated using UUID
 
-    constructor(vector: AuxtaVectorConstructorProps<T>) {
-        if (!this.index)
-            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+    constructor(vector: AuxtaVectorDefinition)
+    constructor(vector: AuxtaVectorConstructorProps<T>)
+    constructor(vector: AuxtaVectorConstructorProps<T> | AuxtaVectorDefinition) {
 
-        Object.assign(this, vector);
+        if ('id' in vector && 'dimensions' in vector) {
+            this.fromDefinition(vector as AuxtaVectorDefinition);
+        }
+        else {
+            this.fromVectorConstructor(vector as AuxtaVectorConstructorProps<T>);
+        }
     }
 
 
@@ -60,6 +65,28 @@ export class AuxtaVector<T extends object> {
     static get index(): AuxtaIndex {
         const index: AuxtaIndex = this[AUXTA_INDEX_METADATA_KEY];
         return index;
+    }
+
+
+    private fromVectorConstructor(vector: AuxtaVectorConstructorProps<T>): void {
+        if (!this.index)
+            throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
+
+        Object.assign(this, vector);
+
+    }
+
+
+    private fromDefinition(vector: AuxtaVectorDefinition): void {
+        this.id = vector.id // Use provided ID or generate a new one
+
+        // compile object of all dimensions values
+        const dimensionsValues: Record<string, any> = vector.dimensions.reduce((acc, dimension) => {
+            acc[dimension.name] = dimension.value;
+            return acc;
+        }, {});
+
+        Object.assign(this, dimensionsValues);
     }
 
 
@@ -111,12 +138,13 @@ export class AuxtaVector<T extends object> {
     }
 
 
-    static toDefinition():AuxtaVectorDefinition {
+    static toDefinition(): AuxtaVectorDefinition {
 
         if (!this.index)
             throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
 
         return {
+            id: crypto.createHash('sha256').update(this.name).digest('hex').slice(0, 16),
             name: this.name,
             dimensions: this.dimensions.map((dimension) => dimension.toDefinition()),
         }

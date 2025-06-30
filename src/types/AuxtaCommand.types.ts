@@ -1,6 +1,6 @@
+import { AuxtaDimensionDefinition } from "./AuxtaDimension.types";
 import { AuxtaIndexDefinition } from "./AuxtaIndex.types";
-import { AuxtaSerializedVector } from "./AuxtaVector.types";
-import { AuxtaDimensionConfig, AuxtaDimensionDefinition } from "./AuxtaDimension.types";
+import { AuxtaSerializedVector, AuxtaVectorDefinition } from "./AuxtaVector.types";
 
 /**
  * Describes all commands that can be performed on the database.
@@ -243,4 +243,106 @@ export type AuxtaRawCommand =
     | AuxtaAddRawCommand
     | AuxtaUpdateRawCommand
     | AuxtaSearchRawCommand
-    | AuxtaDropRawCommand;    
+    | AuxtaDropRawCommand;
+
+
+
+
+
+//=================================================================================================
+// ===============================COMMANDS RESPONSES START=========================================
+//================================================================================================= 
+
+export type AuxtaCommandBaseResponse = {
+    operation: AuxtaDbOperations;
+    entity: AuxtaDBEntity;
+    index?: string; // The index to which the command applies, if applicable
+}
+
+
+
+
+
+
+export type AuxtaGetResponse = AuxtaCommandBaseResponse & {
+    operation: 'GET'; // The command type
+    index: string;
+    definition?: AuxtaVectorDefinition | undefined; // The vector data retrieved
+    entry?: AuxtaSerializedVector | undefined; // The vector data retrieved
+}
+
+export type AuxtaDefineIndexResponse = AuxtaCommandBaseResponse & {
+    operation: 'DEFINE'; // The command type
+    entity: 'index';
+    index: string; // The name of the index defined
+    definition: AuxtaIndexDefinition; // The index definition
+}
+
+
+export type AuxtaDefineDimensionResponse = AuxtaCommandBaseResponse & {
+    operation: 'DEFINE'; // The command type
+    entity: 'dimension';
+    definition: AuxtaDimensionDefinition; // The dimension definition
+}
+
+
+export type AuxtaDefineResponse =
+    AuxtaDefineIndexResponse
+    | AuxtaDefineDimensionResponse;
+
+
+export type AuxtaAddVectorResponse = AuxtaCommandBaseResponse & {
+    operation: 'ADD'; // The command type
+    entity: 'vector';
+    index: string;
+    definition?: AuxtaVectorDefinition; // The vector data added
+    entry?: AuxtaSerializedVector; // The updated vector data
+}
+export type AuxtaAddResponse = AuxtaAddVectorResponse;
+
+export type AuxtaDropIndexResponse = AuxtaCommandBaseResponse & {
+    operation: 'DROP'; // The command type
+    entity: 'index';
+    index: string; // The name of the index dropped
+}
+
+export type AuxtaDropDimensionResponse = AuxtaCommandBaseResponse & {
+    operation: 'DROP'; // The command type
+    entity: 'dimension';
+    index: string;
+    id: string; // The ID of the dimension dropped
+}
+
+export type AuxtaDropVectorResponse = AuxtaCommandBaseResponse & {
+    operation: 'DROP'; // The command type
+    entity: 'vector';
+    index: string;
+    id: string; // The ID of the vector dropped
+}
+
+export type AuxtaDropResponse =
+    AuxtaDropIndexResponse
+    | AuxtaDropDimensionResponse
+    | AuxtaDropVectorResponse;
+
+
+export type AuxtaUpdateResponse = AuxtaCommandBaseResponse & {
+    operation: 'UPDATE'; // The command type
+    definition?: AuxtaVectorDefinition; // The updated vector data
+    entry?: AuxtaSerializedVector; // The updated vector data
+}
+
+export type AuxtaSearchResponse = AuxtaCommandBaseResponse & {
+    operation: 'SEARCH'; // The command type
+    pick: number; // The number of vectors to pick
+    definitions?: AuxtaVectorDefinition[]; // The search results
+    entries?: AuxtaSerializedVector; // The updated vector data
+}
+
+export type AuxtaRawCommandResponse =
+    AuxtaGetResponse
+    | AuxtaDefineResponse
+    | AuxtaAddResponse
+    | AuxtaUpdateResponse
+    | AuxtaSearchResponse
+    | AuxtaDropResponse;

@@ -32,10 +32,10 @@ export class TCPClient {
     }
 
     send(msg: AuxtaServerRequest): Promise<AuxtaServerResponse> {
-        AuxtaLogger.info(
-            `Sending message to ${this.host}:${this.port} - Action: ${msg.headers.action}, Version: ${msg.headers.version}, Client: ${msg.headers.client}`,
-            `\n - Commands\n: ${JSON.stringify(msg.commands, null, 2)}`
-        );
+        // AuxtaLogger.info(
+        //     `Sending message to ${this.host}:${this.port} - Action: ${msg.headers.action}, Version: ${msg.headers.version}, Client: ${msg.headers.client}`,
+        //     `\n - Commands\n: ${JSON.stringify(msg.commands, null, 2)}`
+        // );
 
         return new Promise((resolve, reject) => {
             const encoded = MessageCodec.encode(msg);
@@ -61,8 +61,8 @@ export class TCPClient {
 
                         if (decoded) {
                             this.socket.off('data', onData);
-                            AuxtaLogger.info(`Received data from ${this.host}:${this.port} - Length: ${data.length}`);
-                            AuxtaLogger.info(`Received data: ${JSON.stringify(decoded, null, 2)}`);
+                            // AuxtaLogger.info(`Received data from ${this.host}:${this.port} - Length: ${data.length}`);
+                            // AuxtaLogger.info(`Received data: ${JSON.stringify(decoded, null, 2)}`);
                             resolve(decoded);
                         }
 

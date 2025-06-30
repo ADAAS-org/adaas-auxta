@@ -27,28 +27,81 @@ describe('Database Integration Test', () => {
 
         const getResult = await auxta.query<RunningTrailVector>(getCommand);
 
+        console.log('getResult', getResult);
+
         expect(getResult).toBeDefined();
+        expect(getResult.length).toBe(1);
+        expect(getResult[0]).toBeInstanceOf(RunningTrailVector);
+        expect(getResult[0].id).toBe(testVector.id);
+        expect(getResult[0].averageTime).toBe(testVector.averageTime);
+        expect(getResult[0].distance).toBe(testVector.distance);
+        expect(getResult[0].complexity).toBe(testVector.complexity);
 
-        expect(getResult).toBeInstanceOf(RunningTrailVector);
+        return Promise.resolve();
 
     });
-    it('Should define a new Index manually', async () => {
 
-        @Index('countries')
-        class Countries extends AuxtaVector<Countries> {
-            @Static() foo!: string;
-        }
+    it('Should search for vector with match operator', async () => {
 
-        const defineResult = new AuxtaCommand()
-            .define(Countries);
+        const testVector = new RunningTrailVector({
+            distance: 2222,
+            averageTime: 50,
+            complexity: 'text5',
+            views: ['rocks', 'mud', 'grass', 'sand'],
+            features: ['water', 'trees', 'mountains'],
+        });
+
+        const insertCommand = new AuxtaCommand().add(testVector);
+
+        await auxta.query(insertCommand);
+
+        const searchCommand = new AuxtaCommand()
+            .search(RunningTrailVector)
+            .where('complexity', complexity => complexity.match('text5'))
+
+        const getResult = await auxta.query<RunningTrailVector>(searchCommand);
+        expect(getResult).toBeDefined();
+        expect(getResult[0]).toBeInstanceOf(RunningTrailVector);
+        expect(getResult[0].id).toBe(testVector.id);
+        expect(getResult[0].complexity).toBe(testVector.complexity);
+
+        return Promise.resolve();
+
     });
 
-    it('Should find matched vectors', () => {
-        // const searchResult = new SearchOperation()
-        //     .index('countries')
-        //     .pick(20)
-        //     .where(Age, age => age.gte(5).and().lte(25))
-        //     .where(Country, country => country.in(['USA', 'Canada']))
-        //     .build();
+     it('Should search for vector with multiple operators', async () => {
+
+        const searchCommand = new AuxtaCommand()
+            .search(RunningTrailVector)
+            .where('distance', distance => distance.gte(1000).and().lte(3000))
+            .where('views', views => views.in(['flat', 'uphill']).or().in(['water', 'trees']))
+
+        const getResult = await auxta.query<RunningTrailVector>(searchCommand);
+
+        expect(getResult).toBeDefined();
+        expect(getResult.length).toBe(3);
+
+        return Promise.resolve();
     });
+
+
+
+    // it('Should define a new Index manually', async () => {
+
+    //     @Index('countries')
+    //     class Countries extends AuxtaVector<Countries> {
+    //         @Static() foo!: string;
+    //     }
+
+    //     const defineResult = new AuxtaCommand()
+    //         .define(Countries);
+
+
+
+
+
+    //     expect(defineResult).toBeDefined();
+    // });
+
+
 });

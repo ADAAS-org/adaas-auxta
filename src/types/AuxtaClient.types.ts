@@ -1,4 +1,5 @@
 import { AuxtaServerAction } from "@auxta/constants/AuxtaClient.constants";
+import { AuxtaRawCommandResponse } from "./AuxtaCommand.types";
 
 /**
  * Represents a request to the Auxta server.
@@ -42,6 +43,6 @@ export interface AuxtaServerRequest {
 export interface AuxtaServerResponse {
     version: string;
     client: string;
-    data: object;
+    data: AuxtaRawCommandResponse[] | AuxtaRawCommandResponse;
     action: string;
 }

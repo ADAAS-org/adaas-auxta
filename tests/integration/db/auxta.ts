@@ -28,10 +28,10 @@ export async function initDB() {
 
 export async function clearDB() {
 
-    await Promise.all([
-        auxta.query(new AuxtaCommand('running-trail').drop()),
-        auxta.query(new AuxtaCommand('hard-trail').drop())
-    ]);
+    // await Promise.all([
+    //     auxta.query(new AuxtaCommand('running-trail').drop()),
+    //     auxta.query(new AuxtaCommand('hard-trail').drop())
+    // ]);
 
     await auxta.destroy();
 
