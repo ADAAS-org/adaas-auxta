@@ -74,12 +74,12 @@ describe('Database Integration Test', () => {
         const searchCommand = new AuxtaCommand()
             .search(RunningTrailVector)
             .where('distance', distance => distance.gte(1000).and().lte(3000))
-            .where('views', views => views.in(['flat', 'uphill']).or().in(['water', 'trees']))
+            .where('views', views => views.in(['mud', 'rocks']).or().in(['water', 'trees']))
 
         const getResult = await auxta.query<RunningTrailVector>(searchCommand);
 
         expect(getResult).toBeDefined();
-        expect(getResult.length).toBe(3);
+        expect(getResult.length).toBe(6);
 
         return Promise.resolve();
     });

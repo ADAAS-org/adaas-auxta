@@ -49,11 +49,7 @@ export class AuxtaDropCommand extends AuxtaBaseCommand {
      * 
      * @param names 
      */
-    index(...names: AuxtaIndex[])
-    index(...names: typeof AuxtaVector[])
-    index(...names: string[])
-    index(...params: AuxtaIndex[] | string[] | typeof AuxtaVector[]): AuxtaDropCommand {
-
+    index(...params: Array<AuxtaIndex | string | typeof AuxtaVector>): AuxtaDropCommand {
         if (params.length === 0) {
             throw AuxtaCommandError.commandValidationError(
                 'The command must have at least one index to drop.'
@@ -61,6 +57,7 @@ export class AuxtaDropCommand extends AuxtaBaseCommand {
         }
 
         this._indexesDropCommands = params.map(param => {
+
             if (typeof param === 'string') {
                 return <AuxtaDropIndexRawCommand>{
                     operation: this._operation,
@@ -81,6 +78,8 @@ export class AuxtaDropCommand extends AuxtaBaseCommand {
                     index: param.index.name
                 };
             }
+
+
             throw AuxtaCommandError.commandValidationError(
                 'The index must be a string or an instance of AuxtaIndex.'
             );

@@ -15,6 +15,10 @@ export class AuxtaBaseCommand {
     }
 
 
+    get operation(){
+        return this._operation;
+    }
+
     /**
      * Allows manually setting the command as a raw JSON object.
      * 

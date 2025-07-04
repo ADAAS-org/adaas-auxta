@@ -8,7 +8,7 @@ export const DEFAULT_RUNNING_TRAILS = {
             distance: 1000,
             averageTime: 30,
             complexity: 'flat',
-            views: ['rocks', 'mud', 'grass', 'sand'],
+            views: ['grass', 'sand'],
             features: ['water', 'trees', 'mountains'],
         }),
         new RunningTrailVector({
@@ -22,14 +22,14 @@ export const DEFAULT_RUNNING_TRAILS = {
             distance: 3000,
             averageTime: 60,
             complexity: 'downhill',
-            views: ['rocks', 'mud', 'grass', 'sand'],
+            views: ['rocks',  'grass', 'sand'],
             features: ['water', 'trees', 'mountains'],
         }),
         new RunningTrailVector({
             distance: 1500,
             averageTime: 35,
             complexity: 'flat',
-            views: ['rocks', 'mud', 'grass', 'sand'],
+            views: ['rocks', 'mud', 'grass', ],
             features: ['water', 'trees', 'mountains'],
         }),
         new RunningTrailVector({

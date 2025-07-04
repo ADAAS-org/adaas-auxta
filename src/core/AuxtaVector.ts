@@ -72,7 +72,16 @@ export class AuxtaVector<T extends object> {
         if (!this.index)
             throw AuxtaVectorError.vectorIndexNotDefinedError(this.name);
 
-        Object.assign(this, vector);
+        //  I need to remove internal readonly properties from input vector 
+        const vectorToMerge = Object.keys(vector)
+            .filter(key => !['name', 'index', 'size', 'dimensions'].includes(key))
+            .reduce((obj, key) => {
+                obj[key] = vector[key];
+                return obj;
+            }, {} as T);
+
+
+        Object.assign(this, vectorToMerge);
 
     }
 
@@ -86,7 +95,16 @@ export class AuxtaVector<T extends object> {
             return acc;
         }, {});
 
-        Object.assign(this, dimensionsValues);
+        //  I need to remove internal readonly properties from input vector 
+        const vectorToMerge = Object.keys(vector)
+            .filter(key => !['name', 'index', 'size', 'dimensions'].includes(key))
+            .reduce((obj, key) => {
+                obj[key] = vector[key];
+                return obj;
+            }, {} as T);
+
+
+        Object.assign(this, vectorToMerge);
     }
 
 

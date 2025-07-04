@@ -7,6 +7,7 @@ import { AuxtaDropCommand } from "./commands/AuxtaDrop.command";
 import { AuxtaGetCommand } from "./commands/AuxtaGet.command";
 import { AuxtaRawCommand } from "@auxta/types/AuxtaCommand.types";
 import { AuxtaSearchCommand } from "./commands/AuxtaSearch.command";
+import { AuxtaIndex } from "@auxta/core/AuxtaIndex";
 
 
 export class AuxtaCommand {
@@ -103,28 +104,17 @@ export class AuxtaCommand {
      * @param names 
      * @returns 
      */
-    drop(name?: string): AuxtaDropCommand
-    drop(names: string[]): AuxtaDropCommand
-    drop(param1?: string[] | string): AuxtaDropCommand {
-        if (!this._index) {
+    drop(...params: Array<AuxtaIndex | string | typeof AuxtaVector>): AuxtaDropCommand {
+
+        if (!this._index && params.length === 0) {
             throw AuxtaCommandError.commandValidationError(
                 'The index must be set before dropping entities.'
             );
         }
 
-        let targetName;
-
-        if (!param1) {
-            targetName = [this._index]
-        }
-        else if (Array.isArray(param1)) {
-            targetName = param1;
-        } else {
-            targetName = [param1];
-        }
-
         const command = new AuxtaDropCommand(this._index);
-        command.index(targetName);
+
+        command.index(...(params.length? params : [this._index!]));
 
         return command;
     }

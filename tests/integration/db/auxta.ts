@@ -5,6 +5,7 @@ import { RunningTrailVector } from "./vectors/Trail.vector";
 import { HardTrail } from "./vectors/HardTrail.vector";
 import { AuxtaCommand } from "@auxta/lib/AuxtaCommand.class";
 import { DEFAULT_RUNNING_TRAILS } from "./seed/trails.seed";
+import { RunningTrailIndex } from "./indexes/RunningTrail.index";
 
 
 
@@ -28,10 +29,10 @@ export async function initDB() {
 
 export async function clearDB() {
 
-    // await Promise.all([
-    //     auxta.query(new AuxtaCommand('running-trail').drop()),
-    //     auxta.query(new AuxtaCommand('hard-trail').drop())
-    // ]);
+    await Promise.all([
+        auxta.query(new AuxtaCommand().drop(RunningTrailIndex)),
+        auxta.query(new AuxtaCommand('hard_running_trail').drop())
+    ]);
 
     await auxta.destroy();
 

@@ -99,10 +99,11 @@ export class Auxta {
 
             const result = await this.call(AuxtaServerAction.COMMAND, command);
 
-            return this.mapResult(result);
+            if (['SEARCH', 'GET'].includes(command.operation))
+                return this.mapResult(result);
 
         } catch (error) {
-            AuxtaLogger.error(`Failed to execute command: ${command}`, error);
+            AuxtaLogger.error(`Failed to execute command: ${command.operation}`, error);
 
             throw AuxtaError.executionFailed(
                 `Failed to execute command: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -116,33 +117,70 @@ export class Auxta {
     private mapResult(response: AuxtaServerResponse) {
         if (response.data && Array.isArray(response.data)) {
             // If the result is an array, we assume it's a list of vectors
-            return response.data.map((item) => {
+            return response.data.map((item) => this.mapEntityToClass(item));
+        } else if (response.data && typeof response.data === 'object') {
+            // If the result is a single object, we assume it's a vector or index
+            const entity = this.mapEntityToClass(response.data);
+            if (!entity) {
+                throw AuxtaError.executionFailed(
+                    `Entity ${response.data.entity} not found in the registered vectors or indexes.`
+                );
+            }
+            return entity
+        }
+    }
 
-                switch (true) {
-                    case item.entity === 'vector' && 'definition' in item && !!item.definition:
-                        const vectorConstructor = this.vectors.find(vector => vector.name === item.definition!.name);
-                        if (!vectorConstructor) {
-                            throw AuxtaError.executionFailed(
-                                `Vector ${item.definition!.name} not found in the registered vectors.`
-                            );
-                        }
 
-                        return new vectorConstructor(item.definition);
-                    case item.entity === 'index' && 'definition' in item && !!item.definition: {
-                        const index = this.indexes.find(index => index.name === item.definition!.name);
-                        if (!index) {
-                            throw AuxtaError.executionFailed(
-                                `Index ${item.definition!.name} not found in the registered indexes.`
-                            );
-                        }
-                        return index;
-                    }
-                    default: {
-                        return item; // Return the item as is if it doesn't match any known entity
-                    }
 
+
+    private mapEntityToClass(entity: any): AuxtaVector<any> | AuxtaIndex | Array<AuxtaVector<any>> | null {
+        switch (true) {
+            case (entity.entity === 'vector' && 'definition' in entity && !!entity.definition): {
+                // Find the vector class by its name
+                const vectorConstructor = this.vectors.find(vector => vector.name === entity.definition!.name);
+                if (!vectorConstructor) {
+                    AuxtaLogger.error(`Vector ${entity.definition!.name} not found in the registered vectors.`);
+                    return null;
                 }
-            });
+                return new vectorConstructor(entity.definition);
+            }
+
+            case (entity.entity === 'vector' && 'entry' in entity && !!entity.entry): {
+                // Find the vector class by its name
+                const vectorConstructor = this.vectors.find(vector => vector.name === entity.entry!.name);
+                if (!vectorConstructor) {
+                    AuxtaLogger.error(`Vector ${entity.entry!.name} not found in the registered vectors.`);
+                    return null;
+                }
+                return new vectorConstructor(entity.entry);
+            }
+            case (entity.entity === 'index' && 'definition' in entity && !!entity.definition): {
+                // Find the index class by its name
+                const indexConstructor = this.indexes.find(index => index.name === entity.definition!.name);
+                if (!indexConstructor) {
+                    AuxtaLogger.error(`Index ${entity.definition!.name} not found in the registered indexes.`);
+                    return null;
+                }
+                return indexConstructor;
+            }
+            case (entity.entity === 'index' && 'entries' in entity && !!entity.entries): {
+                
+                return entity.entries.map((entry: any) => {
+                    // Find the vector class by its name
+                    const vectorConstructor = this.vectors.find(vector => vector.name === entry!.name);
+
+                    if (!vectorConstructor) {
+                        AuxtaLogger.error(`Vector ${entry!.name} not found in the registered vectors.`);
+                        return null;
+                    }
+                    return new vectorConstructor(entry);
+                })
+            }
+
+            default:
+                throw AuxtaError.executionFailed(
+                    `Entity ${entity.entity} not recognized or not registered in the Auxta instance.`
+                );
         }
     }
 
