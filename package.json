@@ -1,6 +1,6 @@
 {
   "name": "@adaas/auxta",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SDK for Auxta DB to connect and operate ",
   "files": [
     "dist",
