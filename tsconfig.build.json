@@ -54,7 +54,6 @@
   },
   "include": [
     "src/**/*",
-    "tests/**/*", 
     "examples/**/*", 
     "index.ts"  
   ],
