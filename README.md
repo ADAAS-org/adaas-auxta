@@ -1,5 +1,13 @@
 # 📦 @adaas/auxta
 
+[![npm](https://img.shields.io/npm/v/@adaas/auxta.svg)](https://www.npmjs.com/package/@adaas/auxta)  
+[![Release](https://img.shields.io/github/release/ADAAS-org/adaas-auxta.svg)](https://github.com/ADAAS-org/adaas-auxta/releases)  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/your-profile/)  
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)  
+[![Open Issues](https://img.shields.io/github/issues/ADAAS-org/adaas-auxta.svg)](https://github.com/ADAAS-org/adaas-auxta/issues)  
+[![Documentation](https://img.shields.io/badge/Docs-Read-blue)](https://github.com/ADAAS-org/adaas-auxta/docs)  
+[![Version](https://img.shields.io/badge/Version-1.0.0-green)](https://github.com/ADAAS-org/adaas-auxta/releases/tag/v1.0.0)  
+
 **Auxta DB** is a purpose-built database that combines the strengths of Elasticsearch and Redis, optimized for one task: **fast matching search** across both on-disk and in-memory indexes.
 
 It allows you to define vectors with **static**, **computed**, and **dynamic** fields — all searchable and filterable at high speed.
