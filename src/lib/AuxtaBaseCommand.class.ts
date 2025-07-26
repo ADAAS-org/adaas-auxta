@@ -1,3 +1,4 @@
+import { AuxtaIndex } from "@auxta/core/AuxtaIndex";
 import { AuxtaCommandError } from "@auxta/errors/AuxtaCommand.error";
 import { AuxtaBaseRawCommand, AuxtaDbOperations, AuxtaRawCommand } from "@auxta/types/AuxtaCommand.types";
 
@@ -10,8 +11,8 @@ export class AuxtaBaseCommand {
 
     private _rawCommands: Array<AuxtaRawCommand> = []; // Optional raw command object
 
-    constructor(index?: string) {
-        this._index = index;
+    constructor(index?: string | AuxtaIndex) {
+        this._index = typeof index === 'string' ? index : index?.name;
     }
 
 
@@ -32,8 +33,6 @@ export class AuxtaBaseCommand {
                 'The command must have an command defined.'
             );
         }
-
-
 
         this._operation = command.operation || this._operation;
 

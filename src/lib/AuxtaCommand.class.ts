@@ -22,8 +22,8 @@ export class AuxtaCommand {
      * 
      * @param index 
      */
-    constructor(index?: string) {
-        this._index = index;
+    constructor(index?: string | AuxtaIndex) {
+        this._index = typeof index === 'string' ? index : index?.name;
         this._baseCommand = new AuxtaBaseCommand(this._index);
     }
 
@@ -114,7 +114,7 @@ export class AuxtaCommand {
 
         const command = new AuxtaDropCommand(this._index);
 
-        command.index(...(params.length? params : [this._index!]));
+        command.index(...(params.length ? params : [this._index!]));
 
         return command;
     }

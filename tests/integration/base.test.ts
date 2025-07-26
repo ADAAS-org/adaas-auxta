@@ -30,12 +30,11 @@ describe('Database Integration Test', () => {
         console.log('getResult', getResult);
 
         expect(getResult).toBeDefined();
-        expect(getResult.length).toBe(1);
-        expect(getResult[0]).toBeInstanceOf(RunningTrailVector);
-        expect(getResult[0].id).toBe(testVector.id);
-        expect(getResult[0].averageTime).toBe(testVector.averageTime);
-        expect(getResult[0].distance).toBe(testVector.distance);
-        expect(getResult[0].complexity).toBe(testVector.complexity);
+        expect(getResult).toBeInstanceOf(RunningTrailVector);
+        expect(getResult!.id).toBe(testVector.id);
+        expect(getResult!.averageTime).toBe(testVector.averageTime);
+        expect(getResult!.distance).toBe(testVector.distance);
+        expect(getResult!.complexity).toBe(testVector.complexity);
 
         return Promise.resolve();
 

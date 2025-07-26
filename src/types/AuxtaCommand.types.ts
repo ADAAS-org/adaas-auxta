@@ -66,6 +66,10 @@ export type AuxtaOperatorType =
     'gte'
     // Uses as <=
     | 'lte'
+    // Uses as >
+    | 'gt'
+    // Uses as <
+    | 'lt'
     // Uses as in e.g.  'a' OR 'b' OR 'c'
     | 'in'
     // Uses as not in e.g. 'a' AND 'b' AND 'c'

@@ -87,7 +87,7 @@ export class Auxta {
     ): Promise<Array<AuxtaVector<T>>>
     async query<T extends AuxtaVector<any> = any>(
         command: AuxtaGetCommand
-    ): Promise<Array<T>>
+    ): Promise<T | undefined>
     async query<T extends AuxtaVector<any> = any>(
         command: AuxtaSearchCommand
     ): Promise<Array<T>>
@@ -99,9 +99,17 @@ export class Auxta {
 
             const result = await this.call(AuxtaServerAction.COMMAND, command);
 
-            if (['SEARCH', 'GET'].includes(command.operation))
-                return this.mapResult(result);
+            switch (command.operation) {
+                case 'SEARCH':
+                    return this.mapResult(result) as Array<AuxtaVector<any>>;
 
+                case 'GET':
+                    return (this.mapResult(result) || [])[0] as AuxtaVector<any>;
+
+                default:
+                    return;
+
+            }
         } catch (error) {
             AuxtaLogger.error(`Failed to execute command: ${command.operation}`, error);
 
@@ -164,7 +172,7 @@ export class Auxta {
                 return indexConstructor;
             }
             case (entity.entity === 'index' && 'entries' in entity && !!entity.entries): {
-                
+
                 return entity.entries.map((entry: any) => {
                     // Find the vector class by its name
                     const vectorConstructor = this.vectors.find(vector => vector.name === entry!.name);
