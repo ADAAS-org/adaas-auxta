@@ -15,6 +15,16 @@ export class AuxtaConditionBuilder {
     return this;
   }
 
+  gt(val: number) {
+    this.current.push({ value: { gt: val } });
+    return this;
+  }
+
+  lt(val: number) {
+    this.current.push({ value: { lt: val } });
+    return this;
+  }
+
   in(values: any[]) {
     this.current.push({ value: { in: values } });
     return this;
