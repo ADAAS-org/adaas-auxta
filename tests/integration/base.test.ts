@@ -40,6 +40,10 @@ describe('Database Integration Test', () => {
 
     });
 
+
+
+
+
     it('Should search for vector with match operator', async () => {
 
         const testVector = new RunningTrailVector({
@@ -68,7 +72,7 @@ describe('Database Integration Test', () => {
 
     });
 
-     it('Should search for vector with multiple operators', async () => {
+    it('Should search for vector with multiple operators', async () => {
 
         const searchCommand = new AuxtaCommand()
             .search(RunningTrailVector)
@@ -83,24 +87,57 @@ describe('Database Integration Test', () => {
         return Promise.resolve();
     });
 
+    it('Should search for vector with In Operator', async () => {
 
+        const searchCommand = new AuxtaCommand()
+            .search(RunningTrailVector)
+            .where('views', views => views.in(['mud', 'rocks']))
+
+        const getResult = await auxta.query<RunningTrailVector>(searchCommand);
+
+        expect(getResult).toBeDefined();
+        expect(getResult.length).toBe(6);
+
+        return Promise.resolve();
+    });
+
+    it('Should add new vectors with Empty Array and then search for it ', async () => {
+
+        const testVector = new RunningTrailVector({
+            distance: 2222,
+            averageTime: 50,
+            complexity: 'uphill',
+            views: [],
+            features: ['some-test'],
+        });
+
+        console.log('testVector', testVector.normalize());
+
+        const insertCommand = new AuxtaCommand().add(testVector);
+
+        await auxta.query(insertCommand);
+
+
+        const searchCommand = new AuxtaCommand()
+            .search(RunningTrailVector)
+            .where('features', features => features.in(['some-test']))
+
+        const getResult = await auxta.query<RunningTrailVector>(searchCommand);
+
+        expect(getResult).toBeDefined();
+        expect(getResult.length).toBe(1);
+
+        return Promise.resolve();
+
+    });
 
     // it('Should define a new Index manually', async () => {
-
     //     @Index('countries')
     //     class Countries extends AuxtaVector<Countries> {
     //         @Static() foo!: string;
     //     }
-
     //     const defineResult = new AuxtaCommand()
     //         .define(Countries);
-
-
-
-
-
     //     expect(defineResult).toBeDefined();
     // });
-
-
 });
